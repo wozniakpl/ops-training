@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+
+  app1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: task1
+    ports:
+      - "9001:80"
+    volumes:
+      - ./app1:/code
+    command: flask --app app.py --debug run --host=0.0.0.0 --port=80
+
+  app2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: task2
+    ports:
+      - "9002:80"
+    volumes:
+      - ./app2:/code
+    command: flask --app app.py --debug run --host=0.0.0.0 --port=80
