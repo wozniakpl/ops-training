@@ -35,3 +35,4 @@ terraform.rc
 
 # ssh keys
 id_rsa*
+app_key*
