@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: task1
+      target: app1
     ports:
       - "9001:80"
     volumes:
@@ -17,7 +17,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: task2
+      target: app2
     ports:
       - "9002:80"
     volumes:

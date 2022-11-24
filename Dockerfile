@@ -10,8 +10,8 @@ WORKDIR /code
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
-FROM base AS task1
+FROM base AS app1
 COPY app1/ /code/
 
-FROM base AS task2
+FROM base AS app1
 COPY app2/ /code/
