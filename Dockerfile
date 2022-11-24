@@ -13,5 +13,5 @@ RUN pip3 install -r requirements.txt
 FROM base AS app1
 COPY app1/ /code/
 
-FROM base AS app1
+FROM base AS app2
 COPY app2/ /code/
