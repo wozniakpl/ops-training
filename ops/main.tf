@@ -17,4 +17,12 @@ resource "aws_instance" "app_server" {
   ami           = "ami-830c94e3"
   instance_type = "t2.micro"
 
+  user_data = <<EOF
+#!/bin/bash
+
+apt-get update
+apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+docker run hello-world
+EOF
 }
