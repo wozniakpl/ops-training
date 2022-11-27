@@ -10,6 +10,10 @@ WORKDIR /code
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
+ADD docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+ENTRYPOINT [ "docker-entrypoint.sh" ]
+CMD [ "prod" ]
+
 FROM base AS app1
 COPY app1/ /code/
 

@@ -18,6 +18,13 @@ resource "aws_instance" "app_server" {
   instance_type = "t2.micro"
   key_name = "appkey"
   vpc_security_group_ids = [ aws_security_group.main.id ]
+
+  user_data =  <<EOF
+#!/bin/bash
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh ./get-docker.sh
+sudo usermod -aG docker ubuntu
+EOF
 }
 
 resource "aws_security_group" "main" {
@@ -36,4 +43,9 @@ resource "aws_security_group" "main" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+}
+
+# output app_server's public DNS
+output "app_server_public_dns" {
+  value = aws_instance.app_server.public_dns
 }
