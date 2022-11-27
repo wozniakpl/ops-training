@@ -8,7 +8,7 @@ case $arg in
         exec flask run --host=0.0.0.0 --port=80
         ;;
     prod)
-        exec gunicorn --workers=4 --bind=localhost:80 'app:app'
+        exec gunicorn --workers=4 --bind=0.0.0.0:80 'app:app'
         ;;
     *)
         echo "Unrecognized argument: $arg"
