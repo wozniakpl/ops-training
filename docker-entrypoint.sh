@@ -1,7 +1,17 @@
 #!/bin/bash
 
-exec flask run --host=0.0.0.0 --port=80
+arg=$1
+echo 
 
-# TODO:
-# if dev, flask
-# if prod, gunicorn or smth
+case $arg in
+    dev)
+        exec flask run --host=0.0.0.0 --port=80
+        ;;
+    prod)
+        exec gunicorn --workers=4 --bind=localhost:80 'app:app'
+        ;;
+    *)
+        echo "Unrecognized argument: $arg"
+        exit 1
+        ;;
+esac
