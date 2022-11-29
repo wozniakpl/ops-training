@@ -15,11 +15,11 @@ provider "aws" {
 
 
 resource "aws_instance" "app_server" {
-  ami                    = "ami-017fecd1353bcc96e"
-  instance_type          = "t2.micro"
-  key_name               = "appkey"
-  vpc_security_group_ids = [aws_security_group.ssh.id, aws_security_group.http.id]
-  subnet_id              = aws_subnet.main.id
+  ami                         = "ami-017fecd1353bcc96e"
+  instance_type               = "t2.micro"
+  key_name                    = "appkey"
+  vpc_security_group_ids      = [aws_security_group.ssh.id, aws_security_group.http.id, aws_security_group.swarm.id]
+  subnet_id                   = aws_subnet.main.id
   associate_public_ip_address = true
 
   user_data = <<EOF
@@ -37,10 +37,10 @@ EOF
     destination = "/home/ubuntu/nginx.conf"
 
     connection {
-      type = "ssh"
-      user = "ubuntu"
+      type        = "ssh"
+      user        = "ubuntu"
       private_key = file("./id_rsa")
-      host = self.public_ip
+      host        = self.public_ip
     }
   }
 
@@ -49,10 +49,10 @@ EOF
     destination = "/home/ubuntu/docker-compose.yml"
 
     connection {
-      type = "ssh"
-      user = "ubuntu"
+      type        = "ssh"
+      user        = "ubuntu"
       private_key = file("./id_rsa")
-      host = self.public_ip
+      host        = self.public_ip
     }
   }
 }
@@ -63,8 +63,8 @@ resource "random_integer" "cidr_seed" {
 }
 
 resource "aws_vpc" "main" {
-  cidr_block = cidrsubnet("172.16.0.0/12", 11, random_integer.cidr_seed.result)
-  enable_dns_support = true
+  cidr_block           = cidrsubnet("172.16.0.0/12", 11, random_integer.cidr_seed.result)
+  enable_dns_support   = true
   enable_dns_hostnames = true
 }
 
@@ -142,11 +142,10 @@ resource "aws_security_group" "http" {
 }
 
 resource "aws_eip" "main" {
-  vpc = true
+  vpc      = true
   instance = aws_instance.app_server.id
 }
 
-# ALB
 resource "aws_lb" "main" {
   name               = "main-lb"
   internal           = false
@@ -188,6 +187,50 @@ output "app_server_public_dns" {
   value = aws_eip.main.public_dns
 }
 
+resource "aws_security_group" "swarm" {
+  name        = "swarm-sg"
+  description = "Allow swarm inbound traffic"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description = "swarm"
+    from_port   = 2377
+    to_port     = 2377
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "swarm"
+    from_port   = 7946
+    to_port     = 7946
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "swarm"
+    from_port   = 7946
+    to_port     = 7946
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "swarm"
+    from_port   = 4789
+    to_port     = 4789
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 
 # CloudWatch
 # TODO
