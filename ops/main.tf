@@ -17,7 +17,7 @@ resource "aws_instance" "app_server" {
   ami                    = "ami-017fecd1353bcc96e"
   instance_type          = "t2.micro"
   key_name               = "appkey"
-  vpc_security_group_ids = [aws_security_group.main.id, aws_security_group.web.id]
+  vpc_security_group_ids = [aws_security_group.main.id]
 
   user_data = <<EOF
 #!/bin/bash
@@ -38,24 +38,6 @@ resource "aws_security_group" "main" {
     ]
     from_port = 22
     to_port   = 22
-    protocol  = "tcp"
-  }
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "aws_security_group" "web" {
-  name = "web-sg"
-  ingress {
-    cidr_blocks = [
-      "0.0.0.0/0"
-    ]
-    from_port = 8000
-    to_port   = 8999
     protocol  = "tcp"
   }
   egress {
