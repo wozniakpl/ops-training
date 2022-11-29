@@ -26,7 +26,12 @@ docker push wozniakpl/dev:app2
 docker push wozniakpl/dev:app-proxy
 
 # Deploy the app with terraform
+terraform init
+# export the `appkey` key
+terraform apply
 
 # Start the services on the server
-docker-compose up -d
+docker swarm init
+docker stack deploy --compose-file docker-compose.yml app
+docker service scale <service>=<replicas>
 ```
