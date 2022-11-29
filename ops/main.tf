@@ -33,9 +33,10 @@ sudo apt install -y docker-compose
 EOF
 }
 
-output "app_server_public_dns" {
-  value = aws_instance.app_server.public_dns
-}
+# this shows the old address :/
+# output "app_server_public_dns" {
+#   value = aws_instance.app_server.public_dns
+# }
 
 resource "random_integer" "cidr_seed" {
   min = 0
@@ -120,5 +121,8 @@ resource "aws_eip" "main" {
   instance = aws_instance.app_server.id
 }
 
-# LB
+# ALB (second ec2 instance)
+# TODO
+
+# CloudWatch
 # TODO
