@@ -1,18 +1,15 @@
 version: '3'
 
 services:
-
-  # TODO: make custom image with nginx.conf provided
-  # and docker-compose push/pull it from docker hub
   proxy:
-    image: nginx:1.23.2-alpine
+    build:
+      context: ./ops
+      dockerfile: Dockerfile
     container_name: proxy
     restart: always
     ports:
       - 80:80
       - 443:443
-    volumes:
-      - ./ops/nginx.conf:/etc/nginx/nginx.conf
 
 
   app1:

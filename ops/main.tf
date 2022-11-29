@@ -33,18 +33,6 @@ sudo apt install -y docker-compose
 EOF
 
   provisioner "file" {
-    source      = "nginx.conf"
-    destination = "/home/ubuntu/nginx.conf"
-
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      private_key = file("./id_rsa")
-      host        = self.public_ip
-    }
-  }
-
-  provisioner "file" {
     source      = "docker-compose.yml"
     destination = "/home/ubuntu/docker-compose.yml"
 

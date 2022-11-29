@@ -18,17 +18,15 @@ To deploy the app production-like, do:
 # Build the images
 docker build --target app1 -t wozniakpl/dev:app1 .
 docker build --target app2 -t wozniakpl/dev:app2 .
+docker build -t wozniakpl/dev:app-proxy ./ops
 
 # Push the images
 docker push wozniakpl/dev:app1
 docker push wozniakpl/dev:app2
+docker push wozniakpl/dev:app-proxy
 
 # Deploy the app with terraform
 
-# Copy the config to the server
-cd ops
-scp -i id_rsa {nginx.conf,docker-compose.yml} <user>@<server_address>:~/
-
-# Start the services
+# Start the services on the server
 docker-compose up -d
 ```

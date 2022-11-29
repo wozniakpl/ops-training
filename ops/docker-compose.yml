@@ -2,14 +2,9 @@ version: '3'
 
 services:
   proxy:
-    image: nginx:1.23.2-alpine
-    container_name: proxy
-    restart: always
+    image: wozniakpl/dev:app-proxy
     ports:
       - 80:80
-      - 443:443
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
 
 
   app1:
