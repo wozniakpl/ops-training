@@ -40,6 +40,13 @@ jobs:
           target: app2
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/dev:app2
-      - name: TODO
-        run: |
-          echo "TODO: restart docker swarm on server?"
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            whoami
+            ls -al
