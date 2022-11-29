@@ -33,11 +33,6 @@ sudo apt install -y docker-compose
 EOF
 }
 
-# this shows the old address :/
-# output "app_server_public_dns" {
-#   value = aws_instance.app_server.public_dns
-# }
-
 resource "random_integer" "cidr_seed" {
   min = 0
   max = 2047
@@ -53,6 +48,12 @@ resource "aws_subnet" "main" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = cidrsubnet(aws_vpc.main.cidr_block, 2, 0)
   availability_zone = "us-west-2a"
+}
+
+resource "aws_subnet" "secondary" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = cidrsubnet(aws_vpc.main.cidr_block, 2, 1)
+  availability_zone = "us-west-2b"
 }
 
 resource "aws_internet_gateway" "main" {
@@ -121,8 +122,48 @@ resource "aws_eip" "main" {
   instance = aws_instance.app_server.id
 }
 
-# ALB (second ec2 instance)
-# TODO
+# ALB
+resource "aws_lb" "main" {
+  name               = "main-lb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.http.id]
+  subnets            = [aws_subnet.main.id, aws_subnet.secondary.id]
+}
+
+resource "aws_lb_target_group" "main" {
+  name        = "main-tg"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.main.id
+  target_type = "instance"
+}
+
+resource "aws_lb_listener" "main" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    target_group_arn = aws_lb_target_group.main.arn
+    type             = "forward"
+  }
+}
+
+resource "aws_lb_target_group_attachment" "main" {
+  target_group_arn = aws_lb_target_group.main.arn
+  target_id        = aws_instance.app_server.id
+  port             = 80
+}
+
+output "app_server_public_ip" {
+  value = aws_eip.main.public_ip
+}
+
+output "app_server_public_dns" {
+  value = aws_eip.main.public_dns
+}
+
 
 # CloudWatch
 # TODO

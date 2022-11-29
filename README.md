@@ -24,4 +24,11 @@ docker push wozniakpl/dev:app1
 docker push wozniakpl/dev:app2
 
 # Deploy the app with terraform
+
+# Copy the config to the server
+cd ops
+scp -i id_rsa {nginx.conf,docker-compose.yml} <user>@<server_address>:~/
+
+# Start the services
+docker-compose up -d
 ```

@@ -1,6 +1,9 @@
 version: '3'
 
 services:
+
+  # TODO: make custom image with nginx.conf provided
+  # and docker-compose push/pull it from docker hub
   proxy:
     image: nginx:1.23.2-alpine
     container_name: proxy
