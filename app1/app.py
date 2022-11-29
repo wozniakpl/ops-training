@@ -8,6 +8,6 @@ def page():
     date = datetime.datetime.now()
     return {
         "host": request.host,
-        "remote_addr": request.remote_addr,
+        "remote": request.remote_addr,
         "date": date
     }
